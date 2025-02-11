@@ -46,27 +46,39 @@ int main(int argc, char * argv[]){
             if (strlen(inp) == 1) {
                 if (inp[0] == 'q') break;
                 else if (inp[0] == 'w') {
-                    if (cur_start_row >= 10) {
-                        cur_start_row-= 10;
-                        cur_end_row-=10;
+                    if (cur_start_row - 10 < 0) {
+                        cur_start_row = 0;
+                        cur_end_row = min(R - 1, 9);
+                    } else {
+                        cur_start_row = cur_start_row - 10;
+                        cur_end_row = cur_end_row - 10;
                     }
                 }
                 else if (inp[0] == 's') {
-                    if (cur_end_row <= R - 1 - 10) {
-                        cur_end_row+=10;
-                        cur_start_row+=10;
+                    if (cur_end_row + 10 >= R) {
+                        cur_end_row = R - 1;
+                        cur_start_row = max(0, R - 10);
+                    } else {
+                        cur_end_row = cur_end_row + 10;
+                        cur_start_row = cur_start_row + 10;
                     }
                 }
                 else if (inp[0] == 'a') {
-                    if (cur_start_col >= 10) {
-                        cur_start_col-= 10;
-                        cur_end_col-=10;
+                    if (cur_start_col - 10 < 0) {
+                        cur_start_col = 0;
+                        cur_end_col = min(C - 1, 9);
+                    } else {
+                        cur_start_col = cur_start_col - 10;
+                        cur_end_col = cur_end_col - 10;
                     }
                 }
                 else if (inp[0] == 'd') {
-                    if (cur_end_col <= C - 1 - 10) {
-                        cur_end_col+=10;
-                        cur_start_col+=10;
+                    if (cur_end_col + 10 >= C) {
+                        cur_end_col = C - 1;
+                        cur_start_col = max(0, C - 10);
+                    } else {
+                        cur_end_col = cur_end_col + 10;
+                        cur_start_col = cur_start_col + 10;
                     }
                 }
                 if (!suppress_output)

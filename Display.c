@@ -30,6 +30,10 @@ void printer(int rowstart, int rowend, int colstart, int colend, struct Cell** s
     for (int i = rowstart; i <= rowend; i++) {
         printf("%3d", i + 1);
         for (int j = colstart; j <= colend; j++) {
+            if (spreadsheet[i][j].is_faulty) {
+                char *arr = "ERR";
+                printf(" %11s", arr);
+            } else
             printf(" %11d", spreadsheet[i][j].value);
         }
         printf("\n");

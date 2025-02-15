@@ -345,14 +345,25 @@ void recalc (struct Cell * current, struct Cell * par_cell, int old_value,bool w
             current->value = minn;
             break;}
         case SUM :
-            
+            if(was_faulty) {
+                calc(current, spreadsheet);
+                return;
+            }
             current->value = current->value + par_cell->value - old_value;
             break;
         case AVG :
+            if(was_faulty) {
+                calc(current, spreadsheet);
+                return;
+            }
             current->associated_sum = current->associated_sum + par_cell->value - old_value;
             current->value  = (current->associated_sum)/(current->associated_n);
             break;
         case STD_DEV :
+            if(was_faulty) {
+                calc(current, spreadsheet);
+                return;
+            }
             current->associated_sq_sum = current->associated_sq_sum + (par_cell->value)* (par_cell->value) - (old_value)* (old_value);
             current->associated_sum = current->associated_sum + par_cell->value - old_value;
             int mean = (current->associated_sum)/(current->associated_n);
@@ -360,6 +371,10 @@ void recalc (struct Cell * current, struct Cell * par_cell, int old_value,bool w
             current->value = sqrt(current->value);
             break;
         case SLEEP_CELL:{
+            if(current->par1->is_faulty) {
+                current->is_faulty = true;
+                return;
+            }
             int delaytime = current -> par1 -> value;
             delay(delaytime);
             current -> value = delaytime;

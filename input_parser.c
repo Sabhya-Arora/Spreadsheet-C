@@ -189,7 +189,7 @@ int is_valid_input(char *inp, int R, int C){
     if(strncmp(input, "DISABLE_OUTPUT", strlen("DISABLE_OUTPUT")) == 0){
         if(strlen(input) == strlen("DISABLE_OUTPUT") + 1) return 1;
     }
-    if(strncmp(input, "ENBLE_OUTPUT", strlen("ENABLE_OUTPUT")) == 0){
+    if(strncmp(input, "ENABLE_OUTPUT", strlen("ENABLE_OUTPUT")) == 0){
         if(strlen(input) == strlen("ENABLE_OUTPUT") + 1) return 1;
     }
     if(is_valid_formula(input, R, C) == 1) return 1;

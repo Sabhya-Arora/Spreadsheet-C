@@ -63,7 +63,6 @@ int is_valid_constant(char *cst){
 int is_valid_value(char *value, int R, int C){
     if(is_valid_cell(value, R, C)) return 1;
     if(is_valid_constant(value)) {
-        printf("AJD");
         return 1;
     }
     return 0;
@@ -149,7 +148,6 @@ int is_valid_formula(char *input, int R, int C){
         op++;
     }
     if(!*op){
-        printf("SB");
         return is_valid_value(rhs_ptr, R, C);
     }
     
@@ -194,7 +192,6 @@ int is_valid_input(char *inp, int R, int C){
     if(strncmp(input, "ENBLE_OUTPUT", strlen("ENABLE_OUTPUT")) == 0){
         if(strlen(input) == strlen("ENABLE_OUTPUT") + 1) return 1;
     }
-    // printf("HD");
     if(is_valid_formula(input, R, C) == 1) return 1;
     
     return 0;
@@ -299,7 +296,6 @@ int two_op(char *rhs){
         remove_first_character(ptr4);
         remove_first_character(ptr4);
         insert_character_beginning(ptr4, '+');
-        printf("%s\n", rhs);
         return 0;
     }
     return 0; 
@@ -311,8 +307,6 @@ int three_op(char *rhs){
         char *op_pos = strpbrk(rhs, "+-*/");
         if (*(op_pos+1) == '-'){
             remove_first_character(op_pos+1);
-            // printf("%s\n", rhs);
-            // printf("%c\n", *op_pos);
             if (*op_pos == '+' || *op_pos == '-') return 31;
             else if (*op_pos == '*' || *op_pos == '/') return 32;
         }
@@ -544,7 +538,6 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     remove_spaces(input);
     if(strstr(input, "scroll_to")){
         *operation = SCROLL;
-        printf("%s\n", input);
         parse_spreadsheet_coordinate(input+9, cell_ix, cell_iy);
         *cell_1x = 0;
         *cell_1y = 0;
@@ -656,23 +649,3 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     }
     return 0;
 }
-
-// int main() {
-//     int T =100;
-//     while(T--){
-//         char expression[100];
-//         fgets(expression, sizeof(expression), stdin);
-//         int constant, cell_ix, cell_iy, cell_1x, cell_1y, cell_2x, cell_2y;
-//         enum ops operation;
-//         // int flag_neg;
-//         parse_input(expression, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
-//         printf("Constant: %d\n", constant);
-//         printf("Cell Index: %d, %d\n", cell_ix, cell_iy);
-//         printf("Cell 1: %d, %d\n", cell_1x, cell_1y);
-//         printf("Cell 2: %d, %d\n", cell_2x, cell_2y);
-//         printf("Operation: %d\n", operation);
-//     }
-
-
-
- 

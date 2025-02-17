@@ -1,6 +1,5 @@
 #include "Decl.h"
 #include "AVL.h"
-#include <math.h>
 #include "Eval.h"
 #include "Display.h"
 #include "input_parser.h"

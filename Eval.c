@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "AVL.c"
-#include <time.h>
+#include "AVL.h"
 #include "Decl.h"
 
 void calc (struct Cell * current, struct Cell ** spreadsheet);

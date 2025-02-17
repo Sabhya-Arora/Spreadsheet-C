@@ -35,12 +35,12 @@ int main(int argc, char * argv[]){
     bool suppress_output = false;
     while (true) {
         char inp[30];
-        scanf("%s", inp);
+        fgets(inp, 30, stdin);
         clock_t start_time = clock();
-        if (inp[0] <= 'z' && inp[0] >= 'a') {
-            if (strlen(inp) == 1) {
-                if (inp[0] == 'q') break;
-                else if (inp[0] == 'w') {
+        if (is_valid_input(inp, R, C) == 1) {
+            if (strlen(inp) == 2) {
+                if (inp[0] == 'Q') break;
+                else if (inp[0] == 'W') {
                     if (cur_start_row - 10 < 0) {
                         cur_start_row = 0;
                         cur_end_row = min(R - 1, 9);
@@ -49,7 +49,7 @@ int main(int argc, char * argv[]){
                         cur_end_row = cur_end_row - 10;
                     }
                 }
-                else if (inp[0] == 's') {
+                else if (inp[0] == 'S') {
                     if (cur_end_row + 10 >= R) {
                         cur_end_row = R - 1;
                         cur_start_row = max(0, R - 10);
@@ -58,7 +58,7 @@ int main(int argc, char * argv[]){
                         cur_start_row = cur_start_row + 10;
                     }
                 }
-                else if (inp[0] == 'a') {
+                else if (inp[0] == 'A') {
                     if (cur_start_col - 10 < 0) {
                         cur_start_col = 0;
                         cur_end_col = min(C - 1, 9);
@@ -67,7 +67,7 @@ int main(int argc, char * argv[]){
                         cur_end_col = cur_end_col - 10;
                     }
                 }
-                else if (inp[0] == 'd') {
+                else if (inp[0] == 'D') {
                     if (cur_end_col + 10 >= C) {
                         cur_end_col = C - 1;
                         cur_start_col = max(0, C - 10);
@@ -81,30 +81,33 @@ int main(int argc, char * argv[]){
                 printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
             }
             // disable_output and stuff
-            else if (strcmp("disable_output", inp) == 0) {
+            else if (strcmp("DISABLE_OUTPUT\n", inp) == 0) {
                 suppress_output = true;
                 printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
-            } else if (strcmp("enable_output", inp) == 0) {
+            } else if (strcmp("ENABLE_OUTPUT\n", inp) == 0) {
                 suppress_output = false;
                 printer(cur_start_row, cur_end_row, cur_start_col, cur_end_col, spreadsheet);
                 printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
-            }
-        } else {
-            parse_input(inp, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
-            cell_ix = max(0, cell_ix - 1);
-            cell_iy = max(0, cell_iy - 1);
-            cell_1y = max(0, cell_1y - 1);
-            cell_1x = max(0, cell_1x - 1);
-            cell_2x = max(0, cell_2x - 1);
-            cell_2y = max(0, cell_2y - 1);
-            bool result = update_cell(&spreadsheet[cell_iy][cell_ix], spreadsheet, &spreadsheet[cell_1y][cell_1x], &spreadsheet[cell_2y][cell_2x], constant, operation, R, C);
-            if (!suppress_output)
-            printer(cur_start_row, cur_end_row, cur_start_col, cur_end_col, spreadsheet);
-            if (result) {
-                printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
             } else {
-                printf("[%.1f] (Cyclic dependency) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                parse_input(inp, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
+                cell_ix = max(0, cell_ix - 1);
+                cell_iy = max(0, cell_iy - 1);
+                cell_1y = max(0, cell_1y - 1);
+                cell_1x = max(0, cell_1x - 1);
+                cell_2x = max(0, cell_2x - 1);
+                cell_2y = max(0, cell_2y - 1);
+                bool result = update_cell(&spreadsheet[cell_iy][cell_ix], spreadsheet, &spreadsheet[cell_1y][cell_1x], &spreadsheet[cell_2y][cell_2x], constant, operation, R, C);
+                if (!suppress_output)
+                printer(cur_start_row, cur_end_row, cur_start_col, cur_end_col, spreadsheet);
+                if (result) {
+                    printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                } else {
+                    printf("[%.1f] (Cyclic dependency) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                }
             }
+        } else if (is_valid_input(inp, R, C) == 0) {
+                printer(cur_start_row, cur_end_row, cur_start_col, cur_end_col, spreadsheet);
+                printf("[%.1f] (unrecognized cmd) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
         }
     }
     return 0;

@@ -649,3 +649,4 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     }
     return 0;
 }
+

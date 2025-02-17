@@ -1,4 +1,4 @@
-TARGET_EXEC := final_program
+TARGET_EXEC := sheet
 
 BUILD_DIR := ./build
 SRC_DIRS := ./src
@@ -25,7 +25,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 # The final build step.
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+$(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
 # Build step for C source

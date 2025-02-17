@@ -163,7 +163,7 @@ int is_valid_formula(char *input, int R, int C){
     return 0;
 }
 
-int is_valid_input(const char *inp, int R, int C){
+int is_valid_input(char *inp, int R, int C){
     remove_spaces(inp);
     to_uppercase(inp);
     char input[100];
@@ -225,7 +225,7 @@ void remove_first_character(char *str){
     }
 }
 
-void insert_character_beginning(char *str, const char c){
+void insert_character_beginning(char *str, char c){
     if(str == NULL) return;
     char *temp = str + strlen(str) - 1;
     while(*temp && temp > str){
@@ -235,7 +235,7 @@ void insert_character_beginning(char *str, const char c){
     *temp = c;
 }
 
-void remove_second_of_substring(char *str, const char *substr) {
+void remove_second_of_substring(char *str, char *substr) {
     if (str == NULL || substr == NULL) return; // Handle NULL input
     char *temp = strstr(str, substr);
     if (temp && strlen(substr) >= 2) { 
@@ -256,7 +256,7 @@ void change_character(char *str, char old_char, char new_char) {
     }
 }
 
-int num_ops(const char *rhs){
+int num_ops(char *rhs){
     int count =0;
     while(*rhs){
         if(*rhs == '+' || *rhs == '-' || *rhs == '*' || *rhs == '/') count ++;
@@ -329,7 +329,7 @@ two_op: 22 means (   ) (*, /) (-const)
 
 
 //converting cell index to coordinates
-int column_to_number(const char *col) {
+int column_to_number(char *col) {
     int result = 0;
     while (*col) {
         if (!isalpha(*col)) break;
@@ -339,12 +339,12 @@ int column_to_number(const char *col) {
     return result;
 }
 
-int get_row_number(const char *str) {
+int get_row_number(char *str) {
     while (*str && isalpha(*str)) str++;
     return atoi(str);
 }
 
-void parse_spreadsheet_coordinate(const char *input, int *col_num, int *row_num) {
+void parse_spreadsheet_coordinate(char *input, int *col_num, int *row_num) {
     *col_num = column_to_number(input);
     *row_num = get_row_number(input);
 }
@@ -378,7 +378,7 @@ void separate_lhs_rhs(char *input, char *lhs, char *rhs) {
 
 
 //Identifying the operation
-enum ops get_operation(const char *rhs){
+enum ops get_operation( char *rhs){
 
     char *plus_pos = strstr(rhs, "+");
     char *minus_pos = strstr(rhs, "-");
@@ -441,9 +441,9 @@ enum ops get_operation(const char *rhs){
 
 
 //separator functions
-void separate_cells(const char *rhs, int *cell_1x, int *cell_1y, int *cell_2x, int *cell_2y) {
+void separate_cells(char *rhs, int *cell_1x, int *cell_1y, int *cell_2x, int *cell_2y) {
     char cell1[10], cell2[10];
-    const char *op = strpbrk(rhs, "+-*/");
+    char *op = strpbrk(rhs, "+-*/");
     if (!op) return; // No operation found
 
     strncpy(cell1, rhs, op - rhs);
@@ -454,11 +454,11 @@ void separate_cells(const char *rhs, int *cell_1x, int *cell_1y, int *cell_2x, i
     parse_spreadsheet_coordinate(cell2, cell_2x, cell_2y);
 }
 
-void separate_cells_range(const char *rhs, int *cell_1x, int *cell_1y, int *cell_2x, int *cell_2y) {
+void separate_cells_range( char *rhs, int *cell_1x, int *cell_1y, int *cell_2x, int *cell_2y) {
     char cell1[10], cell2[10];
-    const char *lb = strpbrk(rhs, "("); //of the form =SUM(B2:C2)
-    const char *op = strpbrk(rhs, ":");
-    const char *rb = strpbrk(rhs, ")");
+    char *lb = strpbrk(rhs, "("); //of the form =SUM(B2:C2)
+    char *op = strpbrk(rhs, ":");
+    char *rb = strpbrk(rhs, ")");
     if (!op) return; // No operation found
     strncpy(cell1, lb+1, op-lb-1);
     cell1[op-lb-1] = '\0';
@@ -468,10 +468,10 @@ void separate_cells_range(const char *rhs, int *cell_1x, int *cell_1y, int *cell
     parse_spreadsheet_coordinate(cell2, cell_2x, cell_2y);
 }
 
-void separate_sleep (const char *rhs, int *cell_1x, int *cell_1y, int *constant, int *flag){ //of the form SLEEP(value) where value can be a cell or a constant
+void separate_sleep (char *rhs, int *cell_1x, int *cell_1y, int *constant, int *flag){ //of the form SLEEP(value) where value can be a cell or a constant
     char sleep_str[10];
-    const char *lb = strpbrk(rhs, "(");
-    const char *rb = strpbrk(rhs, ")");
+    char *lb = strpbrk(rhs, "(");
+    char *rb = strpbrk(rhs, ")");
     strncpy(sleep_str, lb+1, rb-lb-1);
     sleep_str[rb-lb-1] = '\0';
     if(isalpha(*sleep_str)){
@@ -486,10 +486,10 @@ void separate_sleep (const char *rhs, int *cell_1x, int *cell_1y, int *constant,
     }
 }
 
-void separate_cell_constant(const char *rhs, int *cell_1x, int *cell_1y, int *constant) {
+void separate_cell_constant(char *rhs, int *cell_1x, int *cell_1y, int *constant) {
     char cell[10];
     char constant_str[10];
-    const char *op = strpbrk(rhs, "+-*/");
+    char *op = strpbrk(rhs, "+-*/");
     if (!op) return; // No operation found
     if(isalpha(*rhs)){
         char *minus_const_pos = strstr(rhs, "-");
@@ -511,10 +511,10 @@ void separate_cell_constant(const char *rhs, int *cell_1x, int *cell_1y, int *co
     
 }
 
-void separate_constant_cell(const char *rhs, int *constant, int *cell_1x, int *cell_1y) {
+void separate_constant_cell(char *rhs, int *constant, int *cell_1x, int *cell_1y) {
     char cell[10];
     char constant_str[10];
-    const char *op = strpbrk(rhs, "+-*/");
+    char *op = strpbrk(rhs, "+-*/");
     if (!op) return; // No operation found
 
     strncpy(constant_str, rhs, op - rhs);
@@ -525,9 +525,9 @@ void separate_constant_cell(const char *rhs, int *constant, int *cell_1x, int *c
     parse_spreadsheet_coordinate(cell, cell_1x, cell_1y);
 }
 
-void separate_constant_constant(const char *rhs, int *constant1, int *constant2) {
+void separate_constant_constant(char *rhs, int *constant1, int *constant2) {
     char constant_str1[10], constant_str2[10];
-    const char *op = strpbrk(rhs, "+-*/");
+    char *op = strpbrk(rhs, "+-*/");
     if (!op) return; // No operation found
 
     strncpy(constant_str1, rhs, op - rhs);

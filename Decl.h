@@ -1,6 +1,16 @@
-#include <stdbool.h>
 #ifndef HEADER_IMPORT
 #define HEADER_IMPORT
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b)) 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+#include <math.h>
+#include <stdbool.h>
+#include <time.h>
 struct Cell{
     int row;
     int col;

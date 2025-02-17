@@ -1,13 +1,9 @@
-#include <stdio.h>
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#include <stdlib.h>
-#include <math.h>
 #include "Decl.h"
-#include "AVL.c"
-#include "Eval.c"
-#include <time.h>
-#include "Display.c"
-#include "input_parser.c"
+#include "AVL.h"
+#include <math.h>
+#include "Eval.h"
+#include "Display.h"
+#include "input_parser.h"
 
 int main(int argc, char * argv[]){
     clock_t in_start_time = clock();
@@ -36,7 +32,7 @@ int main(int argc, char * argv[]){
     int cell_2y;
     int operation;
     printer(cur_start_row, cur_end_row, cur_start_col, cur_end_col, spreadsheet);
-    printf("[%.1f] (ok) > ", clock() - in_start_time);
+    printf("[%.1f] (ok) > ", (double)(clock() - in_start_time) / CLOCKS_PER_SEC);
     bool suppress_output = false;
     while (true) {
         char inp[30];
@@ -91,6 +87,7 @@ int main(int argc, char * argv[]){
                 printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
             } else if (strcmp("enable_output", inp) == 0) {
                 suppress_output = false;
+                printer(cur_start_row, cur_end_row, cur_start_col, cur_end_col, spreadsheet);
                 printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
             }
         } else {
@@ -107,7 +104,7 @@ int main(int argc, char * argv[]){
             if (result) {
                 printf("[%.1f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
             } else {
-                printf("[%.1f] (Cyclic dependency) > ");
+                printf("[%.1f] (Cyclic dependency) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
             }
         }
     }

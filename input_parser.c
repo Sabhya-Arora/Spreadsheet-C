@@ -163,9 +163,11 @@ int is_valid_formula(char *input, int R, int C){
     return 0;
 }
 
-int is_valid_input(char *input, int R, int C){
-    remove_spaces(input);
-    to_uppercase(input);
+int is_valid_input(const char *inp, int R, int C){
+    remove_spaces(inp);
+    to_uppercase(inp);
+    char input[100];
+    strcpy(input, inp);
     
     if(strncmp(input, "W", strlen("W")) == 0){
         if(strlen(input) == strlen("W") + 1) return 1;

@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "AVL.c"
+#include "Decl.h"
+
 void columnNumberToName(int columnNumber, char *result) {
     int index = 0;
     while (columnNumber > 0) {

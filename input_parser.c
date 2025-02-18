@@ -329,15 +329,15 @@ two_op: 22 means (   ) (*, /) (-const)
 
 
 //converting cell index to coordinates
-int column_to_number(char *col) {
-    int result = 0;
-    while (*col) {
-        if (!isalpha(*col)) break;
-        result = result * 26 + (toupper(*col) - 'A' + 1);
-        col++;
-    }
-    return result;
-}
+// int column_to_number(char *col) {
+//     int result = 0;
+//     while (*col) {
+//         if (!isalpha(*col)) break;
+//         result = result * 26 + (toupper(*col) - 'A' + 1);
+//         col++;
+//     }
+//     return result;
+// }
 
 int get_row_number(char *str) {
     while (*str && isalpha(*str)) str++;

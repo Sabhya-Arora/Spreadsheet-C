@@ -536,7 +536,7 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     int flag_neg = 0;
     char lhs[100], rhs[100];
     remove_spaces(input);
-    if(strstr(input, "scroll_to")){
+    if(strstr(input, "SCROLL_TO")){
         *operation = SCROLL;
         parse_spreadsheet_coordinate(input+9, cell_ix, cell_iy);
         *cell_1x = 0;

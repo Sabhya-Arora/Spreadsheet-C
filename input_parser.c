@@ -18,38 +18,44 @@ void remove_spaces(char* s){
     } while(*s++ = *d++);
 }
 
-int base26_digits(int x){
-    if (x == 0) return 1; 
-    return (int)(log10(x) / log10(26)) + 1;
+int column_to_number(char *col) {
+    int result = 0;
+    while (*col) {
+        result = result * 26 + (*col - 'A' + 1);
+        col++;
+    }
+    return result;
 }
 
-int base10_digits(int x){
-    if (x==0) return 1;
-    return (int)(log10(x)) + 1;
-}
 
-int is_valid_cell(char *cell, int R, int C){
-    int max_alpha = base26_digits(R);
-    int max_num = base10_digits(C);
-    int max_len = max_alpha + max_num + 1;
-    if(cell == NULL || *cell == '\0') return 0;
-    if(strlen(cell) > max_len) return 0;
-    int alpha_count=0;
-    int num_count=0;
+int is_valid_cell(char *cell, int R, int C) {
+    if (cell == NULL || *cell == '\0') return 0;
+    char col[10], row[10]; 
+    int col_len = 0, row_len = 0;
+    
     while(*cell && isalpha(*cell)){
-        alpha_count++;
-        cell++;
+        col[col_len++] = *cell++;
     }
+    col[col_len] = '\0';  
+    
     while(*cell && isdigit(*cell)){
-        num_count++;
-        cell++;
+        row[row_len++] = *cell++;
     }
-    if(alpha_count==0 || alpha_count>max_alpha) return 0;
-    if(num_count==0 || num_count>max_num) return 0;
+    row[row_len] = '\0';
     cell++;
-    if(*cell == '\0') return 1;
-    return 0;
+
+    if (*cell != '\0') return 0;
+    if (col_len == 0 || row_len == 0) return 0;
+
+    int col_num = column_to_number(col);
+    if (col_num > C) return 0;
+ 
+    int row_num = atoi(row);
+    if (row_num < 1 || row_num > R) return 0;
+
+    return 1; 
 }
+
 
 int is_valid_constant(char *cst){
     if (cst == NULL || *cst == '\0') return 0;

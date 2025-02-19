@@ -21,7 +21,8 @@ void remove_spaces(char* s){
 int column_to_number(char *col) {
     int result = 0;
     while (*col) {
-        result = result * 26 + (*col - 'A' + 1);
+        if (!isalpha(*col)) break;
+        result = result * 26 + (toupper(*col) - 'A' + 1);
         col++;
     }
     return result;

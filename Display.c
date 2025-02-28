@@ -17,10 +17,12 @@ void columnNumberToName(int columnNumber, char *result) {
     }
 }
 
-void printer(int rowstart, int rowend, int colstart, int colend, struct Cell** spreadsheet) {
+void printer(int rowstart, int colstart, struct Cell** spreadsheet, int R, int C) {
     // 1 - A, 26 - Z, 26 + 1 - AA, 26*2 - AZ, 26*2 + 1 - BA, 26*3 - BZ, 26*26 - YZ, 26*26 + 26 - ZZ, 26*26 + 26 + 1 - AAA, 26*26 + 26*26 + 26 - AZZ
     char result[10]; // Buffer for Excel column name
     printf("   ");
+    int colend = min(colstart + 9, C - 1);
+    int rowend = min(rowstart + 9, R - 1);
     for (int i = colstart; i <= colend; i++) {
         columnNumberToName(i + 1, result);
         printf(" %11s", result);

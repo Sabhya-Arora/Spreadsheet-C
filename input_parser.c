@@ -12,44 +12,52 @@ void to_uppercase(char *str){
 void remove_spaces(char* s){
     char* d = s;
     do{
-        while(*d == ' '){
+        while(*d == ' ' || *d == '\n'){
             ++d;
         }
     } while(*s++ = *d++);
 }
 
-int base26_digits(int x){
-    if (x == 0) return 1; 
-    return (int)(log10(x) / log10(26)) + 1;
+int column_to_number(char *col) {
+    int result = 0;
+    while (*col) {
+        if (!isalpha(*col)) break;
+        result = result * 26 + (toupper(*col) - 'A' + 1);
+        col++;
+    }
+    return result;
 }
 
-int base10_digits(int x){
-    if (x==0) return 1;
-    return (int)(log10(x)) + 1;
-}
 
-int is_valid_cell(char *cell, int R, int C){
-    int max_alpha = base26_digits(R);
-    int max_num = base10_digits(C);
-    int max_len = max_alpha + max_num + 1;
-    if(cell == NULL || *cell == '\0') return 0;
-    if(strlen(cell) > max_len) return 0;
-    int alpha_count=0;
-    int num_count=0;
+int is_valid_cell(char *cell, int R, int C) {
+    char *ptr = cell;
+    if (cell == NULL || *cell == '\0') return 0;
+    char col[10], row[10]; 
+    int col_len = 0, row_len = 0;
+    
     while(*cell && isalpha(*cell)){
-        alpha_count++;
-        cell++;
+        col[col_len++] = *cell++;
     }
+    col[col_len] = '\0';  
+    if (!*cell) return 0;
     while(*cell && isdigit(*cell)){
-        num_count++;
-        cell++;
+        row[row_len++] = *cell++;
     }
-    if(alpha_count==0 || alpha_count>max_alpha) return 0;
-    if(num_count==0 || num_count>max_num) return 0;
-    cell++;
-    if(*cell == '\0') return 1;
-    return 0;
+    row[row_len] = '\0';
+    // cell++;
+    // printf("%d %d\n", *cell, cell - ptr);
+    if (*cell) return 0;
+    if (col_len == 0 || row_len == 0) return 0;
+
+    int col_num = column_to_number(col);
+    if (col_num > C) return 0;
+ 
+    int row_num = atoi(row);
+    if (row_num < 1 || row_num > R) return 0;
+
+    return 1; 
 }
+
 
 int is_valid_constant(char *cst){
     if (cst == NULL || *cst == '\0') return 0;
@@ -121,7 +129,7 @@ int is_valid_formula(char *input, int R, int C){
     strncpy(lhs, input, eq-input);
     lhs[eq-input] = '\0';
     strcpy(rhs, eq+1);
-
+    
     if(!is_valid_cell(lhs, R, C)) return 0;
     if( strncmp(rhs_ptr, "MAX", strlen("MAX")) == 0 ||
     strncmp(rhs_ptr, "MIN", strlen("MIN")) == 0 ||
@@ -147,7 +155,9 @@ int is_valid_formula(char *input, int R, int C){
         if(*op == '+' || *op == '-' || *op == '*' || *op == '/') break;
         op++;
     }
+
     if(!*op){
+
         return is_valid_value(rhs_ptr, R, C);
     }
     
@@ -156,7 +166,7 @@ int is_valid_formula(char *input, int R, int C){
     rhs1[op-rhs_ptr] = '\0';
     strcpy(rhs2, op+1);
 
-    if(is_valid_value(rhs, R, C) && is_valid_value(rhs2, R, C)) return 1;
+    if(is_valid_value(rhs1, R, C) && is_valid_value(rhs2, R, C)) return 1;
 
     return 0;
 }
@@ -168,29 +178,29 @@ int is_valid_input(char *inp, int R, int C){
     strcpy(input, inp);
     
     if(strncmp(input, "W", strlen("W")) == 0){
-        if(strlen(input) == strlen("W") + 1) return 1;
+        if(strlen(input) == strlen("W") ) return 1;
     }
     if(strncmp(input, "S", strlen("S")) == 0){
-        if(strlen(input) == strlen("S") + 1) return 1;
+        if(strlen(input) == strlen("S")) return 1;
     }
     if(strncmp(input, "A", strlen("A")) == 0){
-        if(strlen(input) == strlen("A") + 1) return 1;
+        if(strlen(input) == strlen("A")) return 1;
     }
     if(strncmp(input, "D", strlen("D")) == 0){
-        if(strlen(input) == strlen("D") + 1) return 1;
+        if(strlen(input) == strlen("D")) return 1;
     }
     if(strncmp(input, "Q", strlen("Q")) == 0){
-        if(strlen(input) == strlen("Q") + 1) return 1;
+        if(strlen(input) == strlen("Q")) return 1;
     }
     
     if(strncmp(input, "SCROLL_TO", strlen("SCROLL_TO")) == 0){  
         return is_valid_cell(input+9, R, C);
     }
     if(strncmp(input, "DISABLE_OUTPUT", strlen("DISABLE_OUTPUT")) == 0){
-        if(strlen(input) == strlen("DISABLE_OUTPUT") + 1) return 1;
+        if(strlen(input) == strlen("DISABLE_OUTPUT") ) return 1;
     }
-    if(strncmp(input, "ENBLE_OUTPUT", strlen("ENABLE_OUTPUT")) == 0){
-        if(strlen(input) == strlen("ENABLE_OUTPUT") + 1) return 1;
+    if(strncmp(input, "ENABLE_OUTPUT", strlen("ENABLE_OUTPUT")) == 0){
+        if(strlen(input) == strlen("ENABLE_OUTPUT") ) return 1;
     }
     if(is_valid_formula(input, R, C) == 1) return 1;
     
@@ -323,15 +333,15 @@ two_op: 22 means (   ) (*, /) (-const)
 
 
 //converting cell index to coordinates
-int column_to_number(char *col) {
-    int result = 0;
-    while (*col) {
-        if (!isalpha(*col)) break;
-        result = result * 26 + (toupper(*col) - 'A' + 1);
-        col++;
-    }
-    return result;
-}
+// int column_to_number(char *col) {
+//     int result = 0;
+//     while (*col) {
+//         if (!isalpha(*col)) break;
+//         result = result * 26 + (toupper(*col) - 'A' + 1);
+//         col++;
+//     }
+//     return result;
+// }
 
 int get_row_number(char *str) {
     while (*str && isalpha(*str)) str++;
@@ -536,7 +546,7 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     int flag_neg = 0;
     char lhs[100], rhs[100];
     remove_spaces(input);
-    if(strstr(input, "scroll_to")){
+    if(strstr(input, "SCROLL_TO")){
         *operation = SCROLL;
         parse_spreadsheet_coordinate(input+9, cell_ix, cell_iy);
         *cell_1x = 0;
@@ -650,3 +660,15 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     return 0;
 }
 
+// int main() {
+//     char input[100];
+//     fgets(input, sizeof(input), stdin);
+//     // scanf("%s", input);
+//     if (is_valid_input(input, 20, 20)) {
+//         printf("YES\n");
+//     }
+//     // printf("%d\n\n", is_valid_input(input, 20, 20));
+//     int c, x1, y1, x2, y2, x3, y3, o;
+//     parse_input(input, &c, &x1, &y1, &x2, &y2, &x3, &y3, &o);
+//     printf("%s \n%d %d %d %d\n", input, x1, y1, c, o);
+// }

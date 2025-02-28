@@ -4,6 +4,6 @@
 #include "Decl.h"
 
 void columnNumberToName(int columnNumber, char *result);
-void printer(int rowstart, int rowend, int colstart, int colend, struct Cell** spreadsheet);
+void printer(int rowstart, int colstart, struct Cell** spreadsheet, int R, int C);
 
 #endif

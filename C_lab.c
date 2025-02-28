@@ -4,8 +4,15 @@
 #include "Display.h"
 #include "input_parser.h"
 
+
+double get_time_in_seconds() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);  // Works on all UNIX-based OS
+    return tv.tv_sec + tv.tv_usec / 1e6;  // Convert to seconds
+}
+
 int main(int argc, char * argv[]){
-    clock_t in_start_time = clock();
+    double in_start_time = get_time_in_seconds();
     int R = atoi(argv[1]); int C = atoi(argv[2]);
     struct Cell ** spreadsheet = (struct Cell **) calloc(R, sizeof(struct Cell *));
     for(int i = 0; i<R; i++){
@@ -30,14 +37,15 @@ int main(int argc, char * argv[]){
     int cell_2y;
     int operation;
     printer(cur_start_row, cur_start_col, spreadsheet, R, C);
-    printf("[%.2f] (ok) > ", (double)(clock() - in_start_time) / CLOCKS_PER_SEC);
+    printf("[%.2f] (ok) > ", (double)(get_time_in_seconds() - in_start_time));
     bool suppress_output = false;
     while (true) {
         char inp[30];
         bool result = false;
         fgets(inp, sizeof(inp), stdin);
-        clock_t start_time = clock();
+        double start_time = get_time_in_seconds();
         if (is_valid_input(inp, R, C) == 1) {
+            // printf("Hello");
             if (strlen(inp) == 1) {
                 if (inp[0] == 'Q') break;
                 else if (inp[0] == 'W') {
@@ -62,25 +70,26 @@ int main(int argc, char * argv[]){
                 }
                 if (!suppress_output)
                 printer(cur_start_row, cur_start_col, spreadsheet, R, C);
-                printf("[%.2f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                printf("[%.2f] (ok) > ", (double)(get_time_in_seconds() - start_time));
             }
             // disable_output and stuff
             else if (strcmp("DISABLE_OUTPUT", inp) == 0) {
                 suppress_output = true;
-                printf("[%.2f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                printf("[%.2f] (ok) > ", (double)(get_time_in_seconds() - start_time));
             } else if (strcmp("ENABLE_OUTPUT", inp) == 0) {
                 suppress_output = false;
                 printer(cur_start_row, cur_start_col, spreadsheet, R, C);
-                printf("[%.2f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                printf("[%.2f] (ok) > ", (double)(get_time_in_seconds() - start_time));
             } else {
+                // printf("Hello");
                 parse_input(inp, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
+                // printf("%s %d %d %d\n", inp, cell_ix, cell_iy, operation);
                 cell_ix = max(0, cell_ix - 1);
                 cell_iy = max(0, cell_iy - 1);
                 cell_1y = max(0, cell_1y - 1);
                 cell_1x = max(0, cell_1x - 1);
                 cell_2x = max(0, cell_2x - 1);
                 cell_2y = max(0, cell_2y - 1);
-                // printf("%s %d %d %d\n", inp, cell_ix, cell_iy, operation);
                 if (operation == SCROLL) {
                     cur_start_col = cell_ix;
                     cur_start_row = cell_iy;
@@ -92,15 +101,15 @@ int main(int argc, char * argv[]){
                 if (!suppress_output)
                 printer(cur_start_row, cur_start_col, spreadsheet, R, C);
                 if (result || operation == SCROLL) {
-                    printf("[%.2f] (ok) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                    printf("[%.2f] (ok) > ", (double)(get_time_in_seconds() - start_time));
                 } else {
-                    printf("[%.2f] (Cyclic dependency) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                    printf("[%.2f] (Cyclic dependency) > ", (double)(get_time_in_seconds() - start_time));
                 }
             }
         } else if (is_valid_input(inp, R, C) == 0) {
             // printf("%s %d %d %d\n", inp, cell_ix, cell_iy, operation);
             if (!suppress_output) printer(cur_start_row, cur_start_col, spreadsheet, R, C);
-                printf("[%.2f] (unrecognized cmd) > ", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+                printf("[%.2f] (unrecognized cmd) > ", (double)(get_time_in_seconds() - start_time) );
         }
     }
     return 0;

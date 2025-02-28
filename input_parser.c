@@ -80,7 +80,7 @@ int is_valid_range(char *range, int R, int C){
     if(range == NULL || *range == '\0') return 0;
     char *rptr;
     rptr = range;
-    if(*range == '(' && *(range+strlen(range)-2) == ')'){
+    if(*range == '(' && *(range+strlen(range)-1) == ')'){
         rptr++;
         while(*rptr){
             if(*rptr == ':') break;
@@ -91,8 +91,8 @@ int is_valid_range(char *range, int R, int C){
         char cell1[100], cell2[100];
         strncpy(cell1, range+1, rptr-range-1);
         cell1[rptr-range-1] = '\0';
-        strncpy(cell2, rptr+1, range+strlen(range)-2-rptr-1);
-        cell2[range+strlen(range)-2-rptr-1] = '\0';
+        strncpy(cell2, rptr+1, range+strlen(range)-2-rptr);
+        cell2[range+strlen(range)-2-rptr] = '\0';
 
         if(is_valid_cell(cell1, R, C) && is_valid_cell(cell2, R, C)){
             if(strcmp(cell1, cell2) <= 0) return 1;
@@ -104,10 +104,10 @@ int is_valid_range(char *range, int R, int C){
 
 int is_valid_sleep_value(char *value, int R, int C){
     if(value == NULL || *value == '\0') return 0;
-    if(*value == '(' && *(value+strlen(value)-2) == ')'){
+    if(*value == '(' && *(value+strlen(value)-1) == ')'){
         char val[100];
-        strncpy(val, value+1, strlen(value)-3);
-        val[strlen(value)-3] = '\0';
+        strncpy(val, value+1, strlen(value)-2);
+        val[strlen(value)-2] = '\0';
         if(*val == '-') return 0;
         return is_valid_value(val, R, C);
     }
@@ -432,7 +432,7 @@ enum ops get_operation( char *rhs){
     else if (strstr(rhs, "MIN")) return MIN;
     else if (strstr(rhs, "SUM")) return SUM;
     else if (strstr(rhs, "AVG")) return AVG;
-    else if (strstr(rhs, "STD_DEV")) return STD_DEV;
+    else if (strstr(rhs, "STDEV")) return STD_DEV;
     else if (strstr(rhs, "SLEEP")) return SLEEP_CONST;
 
     else if (isalpha(*rhs)) return SINGLE_CELL;

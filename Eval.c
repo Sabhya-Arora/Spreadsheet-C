@@ -10,18 +10,15 @@ void assign_new_attributes(struct Cell* current, struct Cell ** spreadsheet, str
 void remove_child(struct Cell* current, struct Cell ** spreadsheet);
 void free_topos (struct LinkedListNode * head);
 
-void delay(int number_of_seconds)
-{
-    // Converting time into milli_seconds
-    int milli_seconds = 1000 * number_of_seconds;
 
-    // Storing start time
-    clock_t start_time = clock();
-
-    // looping till required time is not achieved
-    while (clock() < start_time + milli_seconds)
-        ;
+void delay(int number_of_seconds) {
+    struct timespec ts;
+    ts.tv_sec = number_of_seconds;  // Whole seconds
+    ts.tv_nsec = 0;                 // Nanoseconds (optional)
+    nanosleep(&ts, NULL);
 }
+
+
 
 bool update_cell(struct Cell* current, struct Cell ** spreadsheet, struct Cell*parent1, struct Cell*parent2, int constant, int operation, int totalrow, int totalcol) {
     int old_val = current -> value;

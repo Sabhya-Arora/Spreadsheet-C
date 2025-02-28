@@ -4,7 +4,8 @@
 struct AVL;
 struct Node;
 struct Cell;
-
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 bool comp(struct Cell * a, struct Cell * b ){
     if(a->row < b->row) return true;
     if(a->row > b->row) return false;
@@ -66,9 +67,9 @@ struct Node* leftRotate(struct Node* x){
 }
 struct Node* insert(struct Node* node, struct Cell * key){
 
-    if (node == NULL)
+    if (node == NULL){
         return createNode(key);
-
+    }
     if (comp (key, node->key)) node->left = insert(node->left, key);
     else node->right = insert(node->right, key);
 
@@ -84,12 +85,12 @@ struct Node* insert(struct Node* node, struct Cell * key){
         return rightRotate(node);
     }
 
-    if (balance < -1 )
+    if (balance < -1 ){
         if(comp(node->right->key, key))
             return leftRotate(node);
         node->right = rightRotate(node->right);
         return leftRotate(node);
-
+    }
 
     return node;
 }
@@ -144,18 +145,18 @@ struct Node* deleteNode(struct Node* root, struct Cell * key)
     root->height = 1 + max(getHeight(root->left), getHeight(root->right));
     int balance = getBalanceFactor(root);
 
-    if (balance > 1 )
+    if (balance > 1 ){
         if(getBalanceFactor(root->left) >= 0)
             return rightRotate(root);
         root->left =  leftRotate(root->left);
         return rightRotate(root);
-
-    if (balance < -1 )
+    }
+    if (balance < -1 ){
         if(getBalanceFactor(root->right) <=0)
             return leftRotate(root);
         root->right = rightRotate(root->right);
         return leftRotate(root);
-
+    }
 
     return root;
 }

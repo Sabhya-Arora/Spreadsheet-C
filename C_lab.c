@@ -56,7 +56,7 @@ int main(int argc, char * argv[]){
                     }
                 }
                 else if (inp[0] == 'S') {
-                    cur_start_row = min(cur_start_row + 10, R - 1);
+                    cur_start_row = max(min(cur_start_row + 10, R - 10), cur_start_row);
                 }
                 else if (inp[0] == 'A') {
                     if (cur_start_col - 10 < 0) {
@@ -66,7 +66,7 @@ int main(int argc, char * argv[]){
                     }
                 }
                 else if (inp[0] == 'D') {
-                    cur_start_col = min(cur_start_col + 10, C - 1);
+                    cur_start_col = max(min(cur_start_col + 10, C - 10), cur_start_col);
                 }
                 if (!suppress_output)
                 printer(cur_start_row, cur_start_col, spreadsheet, R, C);

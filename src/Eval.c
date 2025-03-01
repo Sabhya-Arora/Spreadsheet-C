@@ -45,6 +45,10 @@ bool update_cell(struct Cell* current, struct Cell ** spreadsheet, struct Cell*p
     }
     toposort(current, current, &topos, visited);
     // call recalc for all children of this cell now
+    for(int i = 0; i< totalrow; i++){
+        free(visited[i]);
+    }
+    free(visited);
     struct LinkedListNode* cur = topos;
     while (cur != NULL) {
         cur = cur -> next;

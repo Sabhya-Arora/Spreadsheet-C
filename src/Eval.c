@@ -12,6 +12,7 @@ void free_topos (struct LinkedListNode * head);
 
 
 void delay(int number_of_seconds) {
+    if (number_of_seconds < 0) number_of_seconds = 0;
     struct timespec ts;
     ts.tv_sec = number_of_seconds;  // Whole seconds
     ts.tv_nsec = 0;                 // Nanoseconds (optional)

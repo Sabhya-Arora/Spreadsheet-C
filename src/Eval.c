@@ -34,7 +34,7 @@ bool update_cell(struct Cell* current, struct Cell ** spreadsheet, struct Cell*p
     add_child(current, spreadsheet);
     // toposort
     struct LinkedListNode* topos = NULL;
-    bool** visited = (bool **) malloc(totalrow*sizeof(bool *));
+    bool** visited = (bool **) (totalrow*sizeof(bool *));
     for(int i = 0; i<totalrow; i++){
         visited[i] = (bool *) malloc(totalcol*sizeof(bool));
     }

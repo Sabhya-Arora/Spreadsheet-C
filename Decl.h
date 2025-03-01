@@ -20,7 +20,7 @@ struct Cell{
     int num_parents;
     int associated_const;
     int associated_sum;
-    int associated_sq_sum;
+    double associated_sq_sum;
     int associated_n;
     bool is_faulty;
     struct Cell * par1;

@@ -362,7 +362,7 @@ void recalc (struct Cell * current, struct Cell * par_cell, int old_value,bool w
             current->associated_sum = current->associated_sum + par_cell->value - old_value;
             int mean = (current->associated_sum)/(current->associated_n);
             current->value = ((current->associated_sq_sum) - 2*(mean)*(current->associated_sum) + (current->associated_n)*mean*mean)/(current->associated_n);
-            current->value = sqrt(current->value);
+            current->value = (int)round(sqrt(current->value));
             break;
         case SLEEP_CELL:{
             if(current->par1->is_faulty) {
@@ -556,7 +556,7 @@ void calc (struct Cell * current, struct Cell ** spreadsheet){
             }
             current -> associated_sum = sum;
             int mean = sum/(current->associated_n);
-            int var = 0;
+            double var = 0;
             for(int i = start_row; i<=end_row; i++){
                 for(int j = start_col; j<=end_col;j++){
                     var+=((spreadsheet[i][j].value - mean)*(spreadsheet[i][j].value - mean));
@@ -564,7 +564,7 @@ void calc (struct Cell * current, struct Cell ** spreadsheet){
             }
             current -> associated_sq_sum = var;
             var/=(current->associated_n);
-            int std_dev = sqrt(var);
+            int std_dev = (int)round(sqrt(var));
             current->value = std_dev;
             break;}
         case SLEEP_CONST:{

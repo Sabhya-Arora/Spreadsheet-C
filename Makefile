@@ -1,4 +1,4 @@
-TARGET_EXEC := sheet
+TARGET_EXEC := target/release/spreadsheet
 
 BUILD_DIR := ./build
 SRC_DIRS := ./src
@@ -26,6 +26,7 @@ CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 # The final build step.
 $(TARGET_EXEC): $(OBJS)
+	mkdir -p target/release
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
 # Build step for C source

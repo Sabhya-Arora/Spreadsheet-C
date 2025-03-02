@@ -3,6 +3,7 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b)) 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
@@ -12,20 +13,20 @@
 #include <stdbool.h>
 #include <time.h>
 #include <sys/time.h>
-struct Cell{
-    int row;
-    int col;
+struct Cell {
+    int16_t row;
+    int16_t col;
     int value;
-    int operation;
-    int num_parents;
     int associated_const;
     int associated_sum;
-    int associated_n;
+    int num_parents;
+    int8_t operation;
     bool is_faulty;
-    struct Cell * par1;
-    struct Cell * par2;
-    struct Node * children;
+    struct Cell *par1;
+    struct Cell *par2;
+    struct Node *children;
 };
+
 enum ops {
     CONST = 1,
     SINGLE_CELL,

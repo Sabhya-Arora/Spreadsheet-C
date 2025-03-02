@@ -35,7 +35,7 @@ bool update_cell(struct Cell* current, struct Cell ** spreadsheet, struct Cell*p
     add_child(current, spreadsheet);
     // toposort
     struct LinkedListNode* topos = NULL;
-    bool** visited = (bool **) (totalrow*sizeof(bool *));
+    bool** visited = (bool **)malloc(totalrow*sizeof(bool *));
     for(int i = 0; i<totalrow; i++){
         visited[i] = (bool *) malloc(totalcol*sizeof(bool));
     }
@@ -129,7 +129,6 @@ void assign_new_attributes(struct Cell* current, struct Cell ** spreadsheet, str
         endrow = current -> par2 -> row;
         endcol = current -> par2 -> col;
         current -> num_parents = (endrow - startrow + 1) * (endcol - startcol + 1);
-        current -> associated_n = current -> num_parents;
     } else if (operation == SLEEP_CONST) {
         current -> num_parents = 0;
         current -> associated_const = constant;
@@ -356,7 +355,7 @@ void recalc (struct Cell * current, struct Cell * par_cell, int old_value,bool w
                 return;
             }
             current->associated_sum = current->associated_sum + par_cell->value - old_value;
-            current->value  = (current->associated_sum)/(current->associated_n);
+            current->value  = (current->associated_sum)/(current->num_parents);
             break;
         case STD_DEV :
             calc(current, spreadsheet);
@@ -533,7 +532,7 @@ void calc (struct Cell * current, struct Cell ** spreadsheet){
                 }
             }
             current -> associated_sum = sum;
-            sum/=(current->associated_n);
+            sum/=(current->num_parents);
             current->value = sum;
             break;}
         case STD_DEV :{
@@ -552,14 +551,14 @@ void calc (struct Cell * current, struct Cell ** spreadsheet){
                 }
             }
             current -> associated_sum = sum;
-            int mean = sum/(current->associated_n);
+            int mean = sum/(current->num_parents);
             double var = 0.0;
             for(int i = start_row; i<=end_row; i++){
                 for(int j = start_col; j<=end_col;j++){
                     var+=((spreadsheet[i][j].value - mean)*(spreadsheet[i][j].value - mean));
                 }
             }
-            var/=(current->associated_n);
+            var/=(current->num_parents);
             int std_dev = (int)round(sqrt(var));
             current->value = std_dev;
             break;}

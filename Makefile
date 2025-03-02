@@ -113,4 +113,3 @@ $(REPORT_PDF): $(REPORT_TEX) | $(REPORT_DIR)
 	$(LATEX) $(LATEX_OPTS) -output-directory=$(REPORT_DIR) $(REPORT_TEX)
 	$(LATEX) $(LATEX_OPTS) -output-directory=$(REPORT_DIR) $(REPORT_TEX)
 	mv $(REPORT_DIR)/report.pdf .
-`

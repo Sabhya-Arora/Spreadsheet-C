@@ -1,4 +1,4 @@
-#include "AVL.h"
+#include "LinkedList.h"
 #include "Decl.h"
 
 void calc (struct Cell * current, struct Cell ** spreadsheet);
@@ -166,26 +166,17 @@ void add_child(struct Cell* current, struct Cell ** spreadsheet) {
         }
     }
 }
-bool dfs(struct Cell* current, bool ** wanna_be_pars, bool ** visited);
-bool preOrder(struct Node* root, bool ** wanna_be_pars, bool ** visited)
-{
-    bool ans = false;
-    if (root != NULL) {
-        if (!visited[root -> key -> row][root -> key -> col]) {
-            ans = ans || dfs(root -> key, wanna_be_pars, visited);
-        } else if (wanna_be_pars[root -> key -> row][root -> key -> col]) {
-            return true;
-        }
-        ans = ans || preOrder(root->left, wanna_be_pars, visited);
-        ans = ans || preOrder(root->right, wanna_be_pars, visited);
-        return ans;
-    } else return false;
-}
 
 bool dfs(struct Cell* current, bool ** wanna_be_pars, bool ** visited) {
     bool ans = false;
     visited[current -> row][current -> col] = true;
-    ans = ans || preOrder(current -> children, wanna_be_pars, visited);
+    for (struct Node * cur = current->children; cur != NULL; cur = cur -> next) {
+        if (!visited[cur -> key -> row][cur -> key -> col]) {
+            ans = ans || dfs(cur -> key, wanna_be_pars, visited);
+        } else if (wanna_be_pars[cur -> key -> row][cur -> key -> col]) {
+            return true;
+        }
+    }
     return ans;
 }
 
@@ -375,11 +366,12 @@ void recalc (struct Cell * current, struct Cell * par_cell, int old_value,bool w
 
 }
 
-void traversal2 (struct Cell * par_cell, struct Node * curr_node, struct LinkedListNode ** ptr_to_head, bool ** vis);
 void toposort (struct Cell * par_cell, struct Cell * curr_cell, struct LinkedListNode ** ptr_to_head, bool ** vis){
     if (vis[curr_cell->row][curr_cell->col]) return;
     vis[curr_cell->row][curr_cell->col] = true;
-    traversal2(curr_cell, curr_cell->children, ptr_to_head,vis);
+    for (struct Node* ptr = curr_cell->children; ptr != NULL; ptr = ptr -> next) {
+        toposort(curr_cell, ptr -> key, ptr_to_head, vis);
+    }
     // printf("In toposort %d %d\n", curr_cell -> row, curr_cell -> col);
     struct LinkedListNode *newhead =  (struct LinkedListNode *) malloc (sizeof(struct LinkedListNode));
     newhead->par_cell = par_cell;
@@ -387,12 +379,6 @@ void toposort (struct Cell * par_cell, struct Cell * curr_cell, struct LinkedLis
     newhead->next = *ptr_to_head;
     *ptr_to_head = newhead;
 }
-void traversal2 (struct Cell * par_cell, struct Node * curr_node,struct LinkedListNode ** ptr_to_head, bool ** vis) {
-    if(curr_node==NULL) return;
-    toposort(par_cell,curr_node->key, ptr_to_head, vis);
-    traversal2 (par_cell,curr_node->left, ptr_to_head, vis);
-    traversal2 (par_cell, curr_node->right, ptr_to_head, vis);
-};
 void calc (struct Cell * current, struct Cell ** spreadsheet){
     switch (current->operation){
         case SINGLE_CELL:

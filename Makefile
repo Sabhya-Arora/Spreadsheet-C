@@ -62,6 +62,7 @@ clean:
 
 	rm -rf $(BUILD_DIR) target
 	rm -f *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.dvi *.fls *.fdb_latexmk $(REPORT_PDF)
+	rm -rf $(REPORT_DIR)
 
 
 # Unit Testing
@@ -93,20 +94,23 @@ test: $(TEST_EXEC)
 	./$(TEST_EXEC)
 
 
-# LaTeX report variables and targets - added feature
-REPORT_TEX := report.tex
+REPORT_DIR := build/report
+SRC_REPORT_DIR := src/report
+REPORT_TEX := $(SRC_REPORT_DIR)/report.tex
 REPORT_PDF := report.pdf
 LATEX := pdflatex
 LATEX_OPTS := -interaction=nonstopmode -halt-on-error
+FIGURES := $(SRC_REPORT_DIR)/figure.jpeg
 
 .PHONY: report cleanreport
 
-# LaTeX compilation target
+$(REPORT_DIR):
+	mkdir -p $(REPORT_DIR)
+
 report: $(REPORT_PDF)
 
-$(REPORT_PDF): $(REPORT_TEX)
-	$(LATEX) $(LATEX_OPTS) $(REPORT_TEX)
-	# Run twice to resolve references
-	$(LATEX) $(LATEX_OPTS) $(REPORT_TEX)
-
--include $(DEPS)
+$(REPORT_PDF): $(REPORT_TEX) | $(REPORT_DIR)
+	$(LATEX) $(LATEX_OPTS) -output-directory=$(REPORT_DIR) $(REPORT_TEX)
+	$(LATEX) $(LATEX_OPTS) -output-directory=$(REPORT_DIR) $(REPORT_TEX)
+	mv $(REPORT_DIR)/report.pdf .
+`

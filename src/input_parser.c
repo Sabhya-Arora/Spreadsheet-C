@@ -44,8 +44,6 @@ int is_valid_cell(char *cell, int R, int C) {
         row[row_len++] = *ptr++;
     }
     row[row_len] = '\0';
-    // cell++;
-    // printf("%d %d\n", *cell, cell - ptr);
     if (*ptr) return 0;
     if (col_len == 0 || row_len == 0) return 0;
 
@@ -545,7 +543,7 @@ void separate_constant_constant(char *rhs, int *constant1, int *constant2) {
 }
 
 //Main parse function  
-int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cell_1x, int *cell_1y, int *cell_2x, int *cell_2y, int *operation){
+void parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cell_1x, int *cell_1y, int *cell_2x, int *cell_2y, int *operation){
     int flag_neg = 0;
     char lhs[100], rhs[100];
     remove_spaces(input);
@@ -557,7 +555,7 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
         *cell_2x = 0;
         *cell_2y = 0;
         *constant = 0;
-        return 1;
+        return;
          
     }
     separate_lhs_rhs(input, lhs, rhs);
@@ -596,14 +594,14 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
         *cell_1y = 0;
         *cell_2x = 0;
         *cell_2y = 0;
-        return 1;
+        return;
     }
     else if(op == SINGLE_CELL){
         parse_spreadsheet_coordinate(rhs, cell_1x, cell_1y);
         *constant = 0;
         *cell_2x = 0;
         *cell_2y = 0;
-        return 1;
+        return;
     }
     else if(op == CELL_ADD_CONST || op == CELL_MULT_CONST || op == CELL_DIV_CONST){
         separate_cell_constant(rhs, cell_1x, cell_1y, constant);
@@ -622,7 +620,7 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
         }
         *cell_2x = 0;
         *cell_2y = 0;
-        return 1;
+        return;
     }
     else if(op == CONST_DIV_CELL || op == CONST_SUB_CELL){
         separate_cell_constant(rhs, cell_1x, cell_1y, constant);
@@ -638,17 +636,17 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
         }
         *cell_2x = 0;
         *cell_2y = 0;
-        return 1;
+        return;
     }
     else if(op == CELL_ADD_CELL || op == CELL_SUB_CELL || op == CELL_MULT_CELL || op == CELL_DIV_CELL){
         separate_cells(rhs, cell_1x, cell_1y, cell_2x, cell_2y);
         *constant = 0;
-        return 1;
+        return;
     }
     else if(op == MAX || op == MIN || op == SUM || op == AVG || op == STD_DEV){
         separate_cells_range(rhs, cell_1x, cell_1y, cell_2x, cell_2y);
         *constant = 0;
-        return 1;
+        return;
     }
     else if(op == SLEEP_CONST){
         int flag = 0;
@@ -658,20 +656,26 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
         if(flag ==1){
             *operation = SLEEP_CELL;
         }
-        return 1;
+        return;
     }
-    return 0;
+    return;
 }
 
 // int main() {
-//     char input[100];
-//     fgets(input, sizeof(input), stdin);
-//     // scanf("%s", input);
-//     if (is_valid_input(input, 20, 20)) {
-//         printf("YES\n");
+//     while(10){
+//         char input[100];
+//         fgets(input, sizeof(input), stdin);
+//         // scanf("%s", input);
+        
+//         if (is_valid_input(input, 10, 10)) {
+//             printf("YES\n");
+//         }
+//         else{
+//             printf("NO\n");
+//         }
 //     }
 //     // printf("%d\n\n", is_valid_input(input, 20, 20));
-//     int c, x1, y1, x2, y2, x3, y3, o;
-//     parse_input(input, &c, &x1, &y1, &x2, &y2, &x3, &y3, &o);
-//     printf("%s \n%d %d %d %d\n", input, x1, y1, c, o);
+//     // int c, x1, y1, x2, y2, x3, y3, o;
+//     // parse_input(input, &c, &x1, &y1, &x2, &y2, &x3, &y3, &o);
+//     // printf("%s \n%d %d %d %d\n", input, x1, y1, c, o);
 // }

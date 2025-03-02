@@ -391,7 +391,13 @@ enum ops get_operation( char *rhs){
     char *minus_pos = strstr(rhs, "-");
     char *mult_pos = strstr(rhs, "*");
     char *div_pos = strstr(rhs, "/");
-    if (plus_pos){
+    if (strstr(rhs, "MAX")) return MAX;
+    else if (strstr(rhs, "MIN")) return MIN;
+    else if (strstr(rhs, "SUM")) return SUM;
+    else if (strstr(rhs, "AVG")) return AVG;
+    else if (strstr(rhs, "STDEV")) return STD_DEV;
+    else if (strstr(rhs, "SLEEP")) return SLEEP_CONST;
+    else if (plus_pos){
         if(isalpha(*rhs)){
             rhs = plus_pos + 1;
             if (isalpha(*rhs)) return CELL_ADD_CELL;
@@ -431,12 +437,6 @@ enum ops get_operation( char *rhs){
         if (isalpha(*rhs)) return CONST_SUB_CELL; //naya hai (done)
         if (isdigit(*rhs)) return CONST; //CONST_SUB_CONST actually (done)
     }
-    else if (strstr(rhs, "MAX")) return MAX;
-    else if (strstr(rhs, "MIN")) return MIN;
-    else if (strstr(rhs, "SUM")) return SUM;
-    else if (strstr(rhs, "AVG")) return AVG;
-    else if (strstr(rhs, "STDEV")) return STD_DEV;
-    else if (strstr(rhs, "SLEEP")) return SLEEP_CONST;
 
     else if (isalpha(*rhs)) return SINGLE_CELL;
     else if (isdigit(*rhs)) return CONST;
@@ -566,6 +566,7 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     if(n==2){if(two_op(rhs)) flag_neg = 1;}
     else if(n==3){if(three_op(rhs) == 31) flag_neg = 1;}
     enum ops op = get_operation(rhs);
+    printf("%d\n", op);
     *operation = op;
     if (op == CONST){
         char constant_str[10];

@@ -30,23 +30,23 @@ int column_to_number(char *col) {
 
 
 int is_valid_cell(char *cell, int R, int C) {
-    char *ptr = cell;
     if (cell == NULL || *cell == '\0') return 0;
+    char *ptr = cell;
     char col[10], row[10]; 
     int col_len = 0, row_len = 0;
     
-    while(*cell && isalpha(*cell)){
-        col[col_len++] = *cell++;
+    while(*ptr && isalpha(*ptr)){
+        col[col_len++] = *ptr++;
     }
     col[col_len] = '\0';  
-    if (!*cell) return 0;
-    while(*cell && isdigit(*cell)){
-        row[row_len++] = *cell++;
+    if (!*ptr) return 0;
+    while(*ptr && isdigit(*ptr)){
+        row[row_len++] = *ptr++;
     }
     row[row_len] = '\0';
     // cell++;
     // printf("%d %d\n", *cell, cell - ptr);
-    if (*cell) return 0;
+    if (*ptr) return 0;
     if (col_len == 0 || row_len == 0) return 0;
 
     int col_num = column_to_number(col);
@@ -61,18 +61,18 @@ int is_valid_cell(char *cell, int R, int C) {
 
 int is_valid_constant(char *cst){
     if (cst == NULL || *cst == '\0') return 0;
-    if (*cst == '-' || *cst == '+') cst++;
-    for(int i=0; i<strlen(cst)-1; i++){
-        if(!isdigit(cst[i])) return 0;
+    char *ptr = cst;
+    if (*ptr == '-') ptr++;
+    for(int i=0; i<strlen(ptr)-1; i++){
+        if(!isdigit(ptr[i])) return 0;
     }
     return 1;
 }
 
 int is_valid_value(char *value, int R, int C){
+    if(value == NULL || *value == '\0') return 0;
     if(is_valid_cell(value, R, C)) return 1;
-    if(is_valid_constant(value)) {
-        return 1;
-    }
+    if(is_valid_constant(value)) return 1;
     return 0;
 }
 
@@ -94,8 +94,10 @@ int is_valid_range(char *range, int R, int C){
         strncpy(cell2, rptr+1, range+strlen(range)-2-rptr);
         cell2[range+strlen(range)-2-rptr] = '\0';
 
+        char* cello1 = cell1;
+        char* cello2 = cell2;
         if(is_valid_cell(cell1, R, C) && is_valid_cell(cell2, R, C)){
-            if(strcmp(cell1, cell2) <= 0) return 1;
+            if(column_to_number(cello1) <= column_to_number(cello2)) return 1;
         }
 
     }
@@ -108,7 +110,6 @@ int is_valid_sleep_value(char *value, int R, int C){
         char val[100];
         strncpy(val, value+1, strlen(value)-2);
         val[strlen(value)-2] = '\0';
-        if(*val == '-') return 0;
         return is_valid_value(val, R, C);
     }
     return 0;
@@ -144,7 +145,7 @@ int is_valid_formula(char *input, int R, int C){
         return is_valid_sleep_value(rhs_ptr+5, R, C);
     }
     
-    if(*rhs_ptr == '-' || *rhs_ptr == '+'){
+    if(*rhs_ptr == '-'){
         if(!isdigit(*(rhs_ptr+1))) return 0;
         rhs_ptr++;
     }
@@ -202,7 +203,9 @@ int is_valid_input(char *inp, int R, int C){
     if(strncmp(input, "ENABLE_OUTPUT", strlen("ENABLE_OUTPUT")) == 0){
         if(strlen(input) == strlen("ENABLE_OUTPUT") ) return 1;
     }
-    if(is_valid_formula(input, R, C) == 1) return 1;
+    if(is_valid_formula(input, R, C) == 1) {
+        return 1;
+    }
     
     return 0;
 }

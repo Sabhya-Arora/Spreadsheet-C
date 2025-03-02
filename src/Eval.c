@@ -39,36 +39,38 @@ bool update_cell(struct Cell* current, struct Cell ** spreadsheet, struct Cell*p
     // add this cell to its parents
     add_child(current, spreadsheet);
     // toposort
-    struct LinkedListNode* topos = NULL;
-    bool** visited = (bool **)malloc(totalrow*sizeof(bool *));
-    for(int i = 0; i<totalrow; i++){
-        visited[i] = (bool *) malloc(totalcol*sizeof(bool));
-    }
-    for (int i = 0; i < totalrow; i++) {
-        for (int j = 0; j < totalcol; j++) {
-            visited[i][j] = false;
+    if(current->children!=NULL){
+        struct LinkedListNode* topos = NULL;
+        bool** visited = (bool **)malloc(totalrow*sizeof(bool *));
+        for(int i = 0; i<totalrow; i++){
+            visited[i] = (bool *) malloc(totalcol*sizeof(bool));
         }
-    }
-    toposort(current, current, &topos, visited);
-    // call recalc for all children of this cell now
-    for(int i = 0; i< totalrow; i++){
-        free(visited[i]);
-    }
-    free(visited);
-    struct LinkedListNode* cur = topos;
-    while (cur != NULL) {
-        cur = cur -> next;
-    }
-    cur = topos;
-    cur = cur -> next;
-    while (cur != NULL) {
-        if ((cur -> value) != NULL) {
-            struct Cell temp = *(cur->value);
+        for (int i = 0; i < totalrow; i++) {
+            for (int j = 0; j < totalcol; j++) {
+                visited[i][j] = false;
+            }
         }
-        recalc(cur -> value, cur -> par_cell, old_val,was_faulty, spreadsheet);
+        toposort(current, current, &topos, visited);
+        // call recalc for all children of this cell now
+        for(int i = 0; i< totalrow; i++){
+            free(visited[i]);
+        }
+        free(visited);
+        struct LinkedListNode* cur = topos;
+        while (cur != NULL) {
+            cur = cur -> next;
+        }
+        cur = topos;
         cur = cur -> next;
+        while (cur != NULL) {
+            if ((cur -> value) != NULL) {
+                struct Cell temp = *(cur->value);
+            }
+            recalc(cur -> value, cur -> par_cell, old_val,was_faulty, spreadsheet);
+            cur = cur -> next;
+        }
+        free_topos(topos);
     }
-    free_topos(topos);
     return true;
 }
 void free_topos (struct LinkedListNode * head){
@@ -196,6 +198,19 @@ bool dfs(struct Cell* current, bool ** wanna_be_pars, bool ** visited) {
 }
 
 bool cycle_detect(struct Cell* current, struct Cell** spreadsheet, int rows, int cols, struct Cell * tobepar1, struct Cell* tobepar2, int operation) {
+    // if(tobepar1!=NULL && tobepar1->row==current->row && tobepar1->col==current->col) return true;
+    // if(tobepar2!=NULL && tobepar2->row==current->row && tobepar2->col==current->col) return true;
+    if(operation==1 || operation==SLEEP_CONST) return false;
+    if((operation>=SINGLE_CELL && operation<=CONST_SUB_CELL) || operation==SLEEP_CELL){
+        if(tobepar1!=NULL && tobepar1->row==current->row && tobepar1->col==current->col) return true;
+    }
+    if(operation>=CELL_ADD_CELL && operation<=CELL_DIV_CELL){
+        if(tobepar1!=NULL && tobepar1->row==current->row && tobepar1->col==current->col) return true;
+        if(tobepar2!=NULL && tobepar2->row==current->row && tobepar2->col==current->col) return true;
+    }
+    if(operation>=MAX && operation<=STD_DEV){
+        if(current->row>=tobepar1->row && current->row<=tobepar2->row && current->col>=tobepar1->col && current->col<=tobepar2->col) return true;
+    }
     bool** wanna_be_pars = (bool **) malloc(rows*sizeof(bool *)),** visited = (bool **) malloc(rows*sizeof(bool *));
     for(int i = 0; i<rows; i++){
         wanna_be_pars[i] = (bool *) malloc(cols*sizeof(bool));

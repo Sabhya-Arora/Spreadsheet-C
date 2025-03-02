@@ -566,7 +566,6 @@ int parse_input(char *input, int *constant, int *cell_ix, int *cell_iy, int *cel
     if(n==2){if(two_op(rhs)) flag_neg = 1;}
     else if(n==3){if(three_op(rhs) == 31) flag_neg = 1;}
     enum ops op = get_operation(rhs);
-    printf("%d\n", op);
     *operation = op;
     if (op == CONST){
         char constant_str[10];

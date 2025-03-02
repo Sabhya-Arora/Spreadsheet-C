@@ -70,16 +70,16 @@ int main(int argc, char * argv[]){
                 }
                 if (!suppress_output)
                 printer(cur_start_row, cur_start_col, spreadsheet, R, C);
-                printf("[%.2f] (ok) > ", abs((double)(get_time_in_seconds() - start_time)));
+                printf("[%.2f] (ok) > ", fabs((double)(get_time_in_seconds() - start_time)));
             }
             // disable_output and stuff
             else if (strcmp("DISABLE_OUTPUT", inp) == 0) {
                 suppress_output = true;
-                printf("[%.2f] (ok) > ", abs((double)(get_time_in_seconds() - start_time)));
+                printf("[%.2f] (ok) > ", fabs((double)(get_time_in_seconds() - start_time)));
             } else if (strcmp("ENABLE_OUTPUT", inp) == 0) {
                 suppress_output = false;
                 printer(cur_start_row, cur_start_col, spreadsheet, R, C);
-                printf("[%.2f] (ok) > ", abs((double)(get_time_in_seconds() - start_time)));
+                printf("[%.2f] (ok) > ", fabs((double)(get_time_in_seconds() - start_time)));
             } else {
                 // printf("Hello");
                 parse_input(inp, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
@@ -101,15 +101,15 @@ int main(int argc, char * argv[]){
                 if (!suppress_output)
                 printer(cur_start_row, cur_start_col, spreadsheet, R, C);
                 if (result || operation == SCROLL) {
-                    printf("[%.2f] (ok) > ", abs((double)(get_time_in_seconds() - start_time)));
+                    printf("[%.2f] (ok) > ", fabs((double)(get_time_in_seconds() - start_time)));
                 } else {
-                    printf("[%.2f] (Cyclic dependency) > ", abs((double)(get_time_in_seconds() - start_time)));
+                    printf("[%.2f] (Cyclic dependency) > ", fabs((double)(get_time_in_seconds() - start_time)));
                 }
             }
         } else if (is_valid_input(inp, R, C) == 0) {
             // printf("%s %d %d %d\n", inp, cell_ix, cell_iy, operation);
             if (!suppress_output) printer(cur_start_row, cur_start_col, spreadsheet, R, C);
-                printf("[%.2f] (unrecognized cmd) > ", abs((double)(get_time_in_seconds() - start_time) ));
+                printf("[%.2f] (unrecognized cmd) > ", fabs((double)(get_time_in_seconds() - start_time) ));
         }
     }
     return 0;

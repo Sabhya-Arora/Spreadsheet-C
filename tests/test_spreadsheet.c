@@ -1,6 +1,6 @@
 #include <check.h>
 #include "../src/Eval.h"  // Include the source file (or replace with a header)
-#include "../src/AVL.h"
+#include "../src/LinkedList.h"
 #include "../src/Decl.h"
 #include "../src/input_parser.h"
 #include "../src/Display.h"

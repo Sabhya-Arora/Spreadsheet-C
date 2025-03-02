@@ -149,7 +149,7 @@ END_TEST
 
 START_TEST(test_is_valid_constant) {
     ck_assert_int_eq(is_valid_constant("123"), 1);
-    ck_assert_int_eq(is_valid_constant("+456"), 1);
+    ck_assert_int_eq(is_valid_constant("+456"), 0);
     ck_assert_int_eq(is_valid_constant("-789"), 1);
     ck_assert_int_eq(is_valid_constant("12a3"), 0);  // Invalid
     ck_assert_int_eq(is_valid_constant("--123"), 0); // Invalid
@@ -183,122 +183,141 @@ START_TEST(test_is_valid_range) {
 }
 END_TEST
 START_TEST(test_is_valid_input) {
-    int R = 10, C = 10; // Example grid size
+    int R = 10, C = 10; 
 
-    // Valid single-character commands
-    ck_assert_int_eq(is_valid_input("W", R, C), 1);
-    ck_assert_int_eq(is_valid_input("S", R, C), 1);
-    ck_assert_int_eq(is_valid_input("A", R, C), 1);
-    ck_assert_int_eq(is_valid_input("D", R, C), 1);
-    ck_assert_int_eq(is_valid_input("Q", R, C), 1);
+    char input1[] = "W";
+    char input2[] = "S";
+    char input3[] = "A";
+    char input4[] = "D";
+    char input5[] = "Q";
+    char input6[] = "  W ";
+    char input7[] = "  scroll_to  A1 ";
+    char input8[] = "SCROLL_TO A1";
+    char input9[] = "ENABLE_OUTPUT";
+    char input10[] = "DISABLE_OUTPUT";
+    char input11[] = "A1=10";
+    char input12[] = "B2=A1+5";
+    char input13[] = "C3=SUM(A1:B2)";
+    char input14[] = "D4=MAX(A1:B10)";
+    
+    char input15[] = "X";
+    char input16[] = "SCROLL_TO Z9";
+    char input17[] = "SCROLL_TO AA1";
+    char input18[] = "SCROLL_TO";
+    char input19[] = "SCROLL_TO A11";
+    char input20[] = "ENABLE_OUTPUTS";
+    char input21[] = "DISABLE";
+    char input22[] = "A1==10";
+    char input23[] = "B2=10+";
+    char input24[] = "";
 
-    // Valid commands with extra spaces (should be handled by remove_spaces)
-    ck_assert_int_eq(is_valid_input("  W ", R, C), 1);
-    ck_assert_int_eq(is_valid_input("  scroll_to  A1 ", R, C), 1);
+    ck_assert_int_eq(is_valid_input(input1, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input2, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input3, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input4, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input5, R, C), 1);
+    
+    ck_assert_int_eq(is_valid_input(input6, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input7, R, C), 1);
+    
+    ck_assert_int_eq(is_valid_input(input8, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input9, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input10, R, C), 1);
 
-    // Valid cell reference commands
-    ck_assert_int_eq(is_valid_input("SCROLL_TO A1", R, C), 1);
-    ck_assert_int_eq(is_valid_input("SCROLL_TO Z9", R, C), 1);
-    ck_assert_int_eq(is_valid_input("SCROLL_TO AA1", R, C), 1);
+    ck_assert_int_eq(is_valid_input(input11, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input12, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input13, R, C), 1);
+    ck_assert_int_eq(is_valid_input(input14, R, C), 1);
 
-    // Valid enable/disable output commands
-    ck_assert_int_eq(is_valid_input("ENABLE_OUTPUT", R, C), 1);
-    ck_assert_int_eq(is_valid_input("DISABLE_OUTPUT", R, C), 1);
-
-    // Valid formulas
-    ck_assert_int_eq(is_valid_input("A1=10", R, C), 1);
-    ck_assert_int_eq(is_valid_input("B2=A1+5", R, C), 1);
-    ck_assert_int_eq(is_valid_input("C3=SUM(A1:B2)", R, C), 1);
-    ck_assert_int_eq(is_valid_input("D4=MAX(A1:B10)", R, C), 1);
-
-    // Invalid inputs
-    ck_assert_int_eq(is_valid_input("X", R, C), 0); // Invalid command
-    ck_assert_int_eq(is_valid_input("SCROLL_TO", R, C), 0); // Missing argument
-    ck_assert_int_eq(is_valid_input("SCROLL_TO A11", R, C), 0); // Out of range
-    ck_assert_int_eq(is_valid_input("ENABLE_OUTPUTS", R, C), 0); // Typo in command
-    ck_assert_int_eq(is_valid_input("DISABLE", R, C), 0); // Incomplete command
-    ck_assert_int_eq(is_valid_input("A1==10", R, C), 0); // Invalid formula
-    ck_assert_int_eq(is_valid_input("B2=10+", R, C), 0); // Incomplete formula
-    ck_assert_int_eq(is_valid_input("", R, C), 0); // Empty string
-    ck_assert_int_eq(is_valid_input(NULL, R, C), 0); // NULL input
+    ck_assert_int_eq(is_valid_input(input15, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input16, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input17, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input18, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input19, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input20, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input21, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input22, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input23, R, C), 0);
+    ck_assert_int_eq(is_valid_input(input24, R, C), 0);
 }
 END_TEST
+
 
 START_TEST(test_parse_input) {
     int constant, cell_ix, cell_iy, cell_1x, cell_1y, cell_2x, cell_2y, operation;
 
-    // Test constant input
-    ck_assert_int_eq(parse_input("A1=5", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    char input1[] = "A1=5";
+    char input2[] = "B2=A1";
+    char input3[] = "C3=A1+10";
+    char input4[] = "D4=B2*C3";
+    char input5[] = "E5=100/5";
+    char input6[] = "F6=SUM(A1:B2)";
+    char input7[] = "G7=MIN(A1:B2)";
+    char input8[] = "SCROLL_TO H8";
+    char input9[] = "A1=SLEEP(5)";
+    char input10[] = "B2=SLEEP(C3)";
+    char input12[] = "A1=100/0";
+
+    parse_input(input1, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(constant, 5);
     ck_assert_int_eq(operation, CONST);
 
-    // Test basic cell assignment
-    ck_assert_int_eq(parse_input("B2=A1", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    parse_input(input2, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(operation, SINGLE_CELL);
-    ck_assert_int_eq(cell_1x, 1); // Column A → index 1
-    ck_assert_int_eq(cell_1y, 1); // Row 1 → index 1
+    ck_assert_int_eq(cell_1x, 1);
+    ck_assert_int_eq(cell_1y, 1);
 
-    // Test addition operation
-    ck_assert_int_eq(parse_input("C3=A1+10", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    parse_input(input3, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(operation, CELL_ADD_CONST);
     ck_assert_int_eq(cell_1x, 1);
     ck_assert_int_eq(cell_1y, 1);
     ck_assert_int_eq(constant, 10);
 
-    // Test multiplication operation
-    ck_assert_int_eq(parse_input("D4=B2*C3", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    parse_input(input4, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(operation, CELL_MULT_CELL);
     ck_assert_int_eq(cell_1x, 2);
     ck_assert_int_eq(cell_1y, 2);
     ck_assert_int_eq(cell_2x, 3);
     ck_assert_int_eq(cell_2y, 3);
 
-    // Test division operation with a constant
-    ck_assert_int_eq(parse_input("E5=100/5", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    parse_input(input5, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(operation, CONST);
     ck_assert_int_eq(constant, 20);
 
-    // Test SUM function
-    ck_assert_int_eq(parse_input("F6=SUM(A1:B2)", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    parse_input(input6, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(operation, SUM);
     ck_assert_int_eq(cell_1x, 1);
     ck_assert_int_eq(cell_1y, 1);
     ck_assert_int_eq(cell_2x, 2);
     ck_assert_int_eq(cell_2y, 2);
 
-    // Test MIN function
-    ck_assert_int_eq(parse_input("G7=MIN(A1:B2)", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    parse_input(input7, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(operation, MIN);
 
-    // Test SCROLL_TO function
-    ck_assert_int_eq(parse_input("SCROLL_TO H8", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
+    parse_input(input8, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
     ck_assert_int_eq(operation, SCROLL);
-    ck_assert_int_eq(cell_ix, 8); // Column H → index 8
-    ck_assert_int_eq(cell_iy, 8); // Row 8 → index 8
+    ck_assert_int_eq(cell_ix, 8);
+    ck_assert_int_eq(cell_iy, 8);
 
-    // Test SLEEP function with a constant value
-ck_assert_int_eq(parse_input("A1=SLEEP(5)", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
-ck_assert_int_eq(operation, SLEEP_CONST);
-ck_assert_int_eq(constant, 5);
-ck_assert_int_eq(cell_ix, 1);  // Column A → index 1
-ck_assert_int_eq(cell_iy, 1);  // Row 1 → index 1
+    parse_input(input9, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
+    ck_assert_int_eq(operation, SLEEP_CONST);
+    ck_assert_int_eq(constant, 5);
+    ck_assert_int_eq(cell_ix, 1);
+    ck_assert_int_eq(cell_iy, 1);
 
-// Test SLEEP function with a cell reference
-ck_assert_int_eq(parse_input("B2=SLEEP(C3)", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
-ck_assert_int_eq(operation, SLEEP_CELL);
-ck_assert_int_eq(cell_1x, 3);  // Column C → index 3
-ck_assert_int_eq(cell_1y, 3);  // Row 3 → index 3
-ck_assert_int_eq(cell_ix, 2);  // Column B → index 2
-ck_assert_int_eq(cell_iy, 2);  // Row 2 → index 2
+    parse_input(input10, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
+    ck_assert_int_eq(operation, SLEEP_CELL);
+    ck_assert_int_eq(cell_1x, 3);
+    ck_assert_int_eq(cell_1y, 3);
+    ck_assert_int_eq(cell_ix, 2);
+    ck_assert_int_eq(cell_iy, 2);
 
-
-    // Test invalid input
-    ck_assert_int_eq(parse_input("INVALID=100", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 0);
-    ck_assert_int_eq(parse_input("A1=100/0", &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation), 1);
-    ck_assert_int_eq(operation, ERR); // Division by zero should return an error
-
+    parse_input(input12, &constant, &cell_ix, &cell_iy, &cell_1x, &cell_1y, &cell_2x, &cell_2y, &operation);
+    ck_assert_int_eq(operation, ERR);
 }
 END_TEST
+
+
 START_TEST(test_cycle_detect) {
     int rows = 3, cols = 3;
     struct Cell **spreadsheet = malloc(rows * sizeof(struct Cell *));

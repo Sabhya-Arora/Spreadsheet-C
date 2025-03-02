@@ -40,7 +40,7 @@ int main(int argc, char * argv[]){
     printf("[%.2f] (ok) > ", (double)(get_time_in_seconds() - in_start_time));
     bool suppress_output = false;
     while (true) {
-        char inp[30];
+        char inp[50];
         bool result = false;
         fgets(inp, sizeof(inp), stdin);
         double start_time = get_time_in_seconds();

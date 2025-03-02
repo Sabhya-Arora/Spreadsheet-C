@@ -299,7 +299,171 @@ ck_assert_int_eq(cell_iy, 2);  // Row 2 → index 2
 
 }
 END_TEST
+START_TEST(test_cycle_detect) {
+    int rows = 3, cols = 3;
+    struct Cell **spreadsheet = malloc(rows * sizeof(struct Cell *));
+    for (int i = 0; i < rows; i++) {
+        spreadsheet[i] = calloc(cols, sizeof(struct Cell));
+    }
 
+    struct Cell *A1 = &spreadsheet[0][0];
+    struct Cell *B1 = &spreadsheet[0][1];
+    struct Cell *C1 = &spreadsheet[0][2];
+
+    A1->row = 0; A1->col = 0;
+    B1->row = 0; B1->col = 1;
+    C1->row = 0; C1->col = 2;
+
+    // A1 = B1 + 10 (No cycle)
+    ck_assert_int_eq(cycle_detect(A1, spreadsheet, rows, cols, B1, NULL, CELL_ADD_CONST), 0);
+
+    // A1 = A1 + 10 (Direct self-referential cycle)
+    ck_assert_int_eq(cycle_detect(A1, spreadsheet, rows, cols, A1, NULL, CELL_ADD_CONST), 1);
+
+    // A1 → B1 → C1 → A1 (Indirect cycle)
+    B1->par1 = A1;
+    add_cell(&(A1->children), B1);
+    C1->par1 = B1;
+    add_cell(&(B1->children), C1);
+    ck_assert_int_eq(cycle_detect(A1, spreadsheet, rows, cols, C1, NULL, CELL_ADD_CONST), 1);
+
+    // A1 = SUM(A1:B1) (Range-based cycle where A1 is included in the sum)
+    ck_assert_int_eq(cycle_detect(A1, spreadsheet, rows, cols, A1, B1, SUM), 1);
+
+    for (int i = 0; i < rows; i++) {
+        free(spreadsheet[i]);
+    }
+    free(spreadsheet);
+}
+END_TEST
+
+
+START_TEST(test_toposort) {
+    int rows = 3, cols = 3;
+    struct Cell **spreadsheet = malloc(rows * sizeof(struct Cell *));
+    for (int i = 0; i < rows; i++) {
+        spreadsheet[i] = calloc(cols, sizeof(struct Cell));
+    }
+
+    struct Cell *A1 = &spreadsheet[0][0];
+    struct Cell *B1 = &spreadsheet[0][1];
+    struct Cell *C1 = &spreadsheet[0][2];
+
+    A1->row = 0; A1->col = 0;
+    B1->row = 0; B1->col = 1;
+    C1->row = 0; C1->col = 2;
+
+    B1->par1 = A1;
+    C1->par1 = B1;
+
+    struct LinkedListNode *topos = NULL;
+    bool **visited = malloc(rows * sizeof(bool *));
+    for (int i = 0; i < rows; i++) {
+        visited[i] = calloc(cols, sizeof(bool));
+    }
+
+    toposort(A1, A1, &topos, visited);
+    ck_assert_ptr_nonnull(topos);
+    ck_assert_ptr_eq(topos->value, A1);
+
+    toposort(A1, B1, &topos, visited);
+    ck_assert_ptr_eq(topos->value, B1);
+
+    toposort(A1, C1, &topos, visited);
+    ck_assert_ptr_eq(topos->value, C1);
+
+    struct LinkedListNode *cur = topos;
+    int count = 0;
+    while (cur) {
+        count++;
+        cur = cur->next;
+    }
+    ck_assert_int_eq(count, 3);
+
+    for (int i = 0; i < rows; i++) {
+        free(visited[i]);
+        free(spreadsheet[i]);
+    }
+    free(visited);
+    free(spreadsheet);
+}
+END_TEST
+
+START_TEST(test_calc) {
+    int rows = 3, cols = 3;
+    struct Cell **spreadsheet = malloc(rows * sizeof(struct Cell *));
+    for (int i = 0; i < rows; i++) {
+        spreadsheet[i] = calloc(cols, sizeof(struct Cell));
+    }
+
+    struct Cell *A1 = &spreadsheet[0][0];
+    struct Cell *B1 = &spreadsheet[0][1];
+    struct Cell *C1 = &spreadsheet[0][2];
+
+    A1->row = 0; A1->col = 0;
+    B1->row = 0; B1->col = 1;
+    C1->row = 0; C1->col = 2;
+
+    A1->operation = CONST;
+    A1->value = 10;
+    calc(A1, spreadsheet);
+    ck_assert_int_eq(A1->value, 10);
+
+    B1->operation = SINGLE_CELL;
+    B1->par1 = A1;
+    calc(B1, spreadsheet);
+    ck_assert_int_eq(B1->value, 10);
+
+    C1->operation = CELL_ADD_CONST;
+    C1->par1 = B1;
+    C1->associated_const = 5;
+    calc(C1, spreadsheet);
+    ck_assert_int_eq(C1->value, 15);
+
+    C1->operation = CELL_MULT_CONST;
+    C1->associated_const = 2;
+    calc(C1, spreadsheet);
+    ck_assert_int_eq(C1->value, 20);
+
+    C1->operation = CELL_DIV_CONST;
+    C1->associated_const = 5;
+    calc(C1, spreadsheet);
+    ck_assert_int_eq(C1->value, 2);
+
+    C1->operation = CONST_DIV_CELL;
+    C1->associated_const = 100;
+    calc(C1, spreadsheet);
+    ck_assert_int_eq(C1->value, 10);
+
+    C1->operation = CONST_SUB_CELL;
+    C1->associated_const = 50;
+    calc(C1, spreadsheet);
+    ck_assert_int_eq(C1->value, 40);
+
+    B1->operation = CELL_ADD_CELL;
+    B1->par1 = A1;
+    B1->par2 = C1;
+    calc(B1, spreadsheet);
+    ck_assert_int_eq(B1->value, 50);
+
+    B1->operation = CELL_SUB_CELL;
+    calc(B1, spreadsheet);
+    ck_assert_int_eq(B1->value, -30);
+
+    B1->operation = CELL_MULT_CELL;
+    calc(B1, spreadsheet);
+    ck_assert_int_eq(B1->value, 400);
+
+    B1->operation = CELL_DIV_CELL;
+    calc(B1, spreadsheet);
+    ck_assert_int_eq(B1->value, 0);
+
+    for (int i = 0; i < rows; i++) {
+        free(spreadsheet[i]);
+    }
+    free(spreadsheet);
+}
+END_TEST
 
 Suite *spreadsheet_suite(void)
 {
@@ -309,8 +473,11 @@ Suite *spreadsheet_suite(void)
     s = suite_create("Spreadsheet");
     tc_core = tcase_create("Core");
 
+    // Display
     tcase_add_test(tc_core, test_columnNumberToName);
     tcase_add_test(tc_core, test_printer);
+
+    // Input parser
     tcase_add_test(tc_core, test_to_uppercase);
     tcase_add_test(tc_core, test_remove_spaces);
     tcase_add_test(tc_core, test_column_to_number);
@@ -320,9 +487,12 @@ Suite *spreadsheet_suite(void)
     tcase_add_test(tc_core, test_is_valid_range);
     tcase_add_test(tc_core, test_is_valid_input);
     tcase_add_test(tc_core, test_parse_input);
-    
 
-    
+    // Eval
+    tcase_add_test(tc_core, test_cycle_detect);
+    tcase_add_test(tc_core, test_toposort);
+    tcase_add_test(tc_core, test_calc);
+
     suite_add_tcase(s, tc_core);
     return s;
 }

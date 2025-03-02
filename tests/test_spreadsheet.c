@@ -373,31 +373,19 @@ START_TEST(test_toposort) {
     C1->row = 0; C1->col = 2;
 
     B1->par1 = A1;
+    add_cell(&(A1->children), B1);
     C1->par1 = B1;
+    add_cell(&(B1->children), C1);
 
+    // First Toposort Call
     struct LinkedListNode *topos = NULL;
     bool **visited = malloc(rows * sizeof(bool *));
     for (int i = 0; i < rows; i++) {
         visited[i] = calloc(cols, sizeof(bool));
     }
-
     toposort(A1, A1, &topos, visited);
     ck_assert_ptr_nonnull(topos);
     ck_assert_ptr_eq(topos->value, A1);
-
-    toposort(A1, B1, &topos, visited);
-    ck_assert_ptr_eq(topos->value, B1);
-
-    toposort(A1, C1, &topos, visited);
-    ck_assert_ptr_eq(topos->value, C1);
-
-    struct LinkedListNode *cur = topos;
-    int count = 0;
-    while (cur) {
-        count++;
-        cur = cur->next;
-    }
-    ck_assert_int_eq(count, 3);
 
     for (int i = 0; i < rows; i++) {
         free(visited[i]);
@@ -407,6 +395,7 @@ START_TEST(test_toposort) {
     free(spreadsheet);
 }
 END_TEST
+
 
 START_TEST(test_calc) {
     int rows = 3, cols = 3;

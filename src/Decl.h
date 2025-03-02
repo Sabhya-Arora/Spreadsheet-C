@@ -49,6 +49,18 @@ enum ops {
     ERR
 };
 
+struct StackNode {
+    struct Cell* cur, *par;
+    struct StackNode* next;
+    struct Node* start;
+};
+
+struct Dfsnode {
+    struct Cell* cur;
+    struct Dfsnode* next;
+    struct Node* start;
+};
+
 struct Node {
     struct Node * next;
     struct Cell * key;

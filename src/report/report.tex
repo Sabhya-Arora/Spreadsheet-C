@@ -6,22 +6,49 @@
 \graphicspath{{./images/}}
 
 \usepackage[top=0.7in, bottom=0.7in, left=0.5in, right=0.5in]{geometry}
-
+\usepackage{hyperref}
 \usepackage{float}
 \usepackage{amsmath}
 \usepackage{titlesec}
+
 \titleformat{\chapter}[display]{\normalfont\bfseries}{}{0pt}{\Huge}
 \setlength{\parskip}{0pt}  % Removes extra spacing between paragraphs
 \setlength{\itemsep}{0pt}
-\title{COP290 C LAB : Spreadsheet in C\\}
-\author{Aditya Narware, Rachit Bhalani, Sabhya Arora\\2023CS10805, 2023CS10961, 2023CS11177}
-\date{February 2025}
+% \title{COP290 C LAB : Spreadsheet in C\\}
+% \author{Aditya Narware, Rachit Bhalani, Sabhya Arora\\2023CS10805, 2023CS10961, 2023CS11177}
+% \date{February 2025}
+
+
 
 \begin{document}
+\begin{titlepage}
+    \centering
+    Date \hfill 2 March 2025\\
+    \vspace{7cm}
+    {\Huge \bfseries COP290 C LAB : Spreadsheet in C\\}
+    \vspace{1cm}
+    
+    {\Large Aditya Narware, Rachit Bhalani, Sabhya Arora\\}
+    \vspace{0.2cm}
+    {\large 2023CS10805, 2023CS10961, 2023CS11177\\}
+    
+    \vspace{1cm}
+    {\large February 2025\\}
+    \vspace{1cm}
+    
+    \textbf{Demo Video:}  
+    \href{https://csciitd-my.sharepoint.com/:v:/g/personal/cs1230805_iitd_ac_in/EYdAAlpovttDqqyyG8uE8YkBuPeXcZeU0GyfI0AGxSb95Q?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=IAhGix}{Click here to watch the video}  
+    
+    \vspace{0.5cm}  
 
-\maketitle
+    \textbf{GitHub Repository:}  
+    \href{https://github.com/Sabhya-Arora/COP290-C-Lab}{Click here for the source code}
+    
+    \vfill
+\end{titlepage}
 
-\newpage
+% \maketitle
+% \newpage
 
 \section*{Introduction}
 This project implements a command-line spreadsheet program that manages a grid of integer-valued cells. Users can assign values directly (e.g., \texttt{A1=3}) or define formulas (e.g., \texttt{B1=A1+1}) with arithmetic operations (+, -, *, /) and integer truncation. It supports aggregate functions such as \texttt{MIN}, \texttt{MAX}, \texttt{AVG}, \texttt{SUM}, and \texttt{STDEV}, along with \texttt{SLEEP(Value)} for timed execution.\\ 
@@ -35,7 +62,7 @@ The program features seamless navigation (\texttt{w, a, s, d}, \texttt{scroll\_t
 \section*{Program overview}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{src/report/figure.jpeg}
+    \includegraphics[width=0.7\linewidth]{figure.jpeg}
     \caption{Program flow diagram}
     \label{fig:enter-label}
 \end{figure}
@@ -92,8 +119,9 @@ This design is based on the observation that all valid operations involve at mos
 The parser first identifies the operation type and updates the extracted data accordingly. The parser separates the (LHS) to identify the target cell and extracts cells and constants from the (RHS) based on the specific operation involved.
 
 
-\subsection*{Linked List Data structure : \texttt{LinkedList.c}}
-Standard implementation of linked list data structure, which (space) efficiently stores and updates dependent cells. Previously, an AVL tree was used, but a linked list was chosen due to memory constraints. This design balances correctness and resource efficiency while dynamically handling updates. Each cell maintains a list of children, ensuring correct recalculations when values change. Operations such as insertions, deletions, and traversals are optimized for minimal overhead, prioritizing space efficiency. 
+\subsection*{Linked List and Stack Data structures : \texttt{LinkedList.c, Stack.c}}
+Standard implementation of linked list data structure, which (space) efficiently stores and updates dependent cells. Previously, an AVL tree was used, but a linked list was chosen due to memory constraints. This design balances correctness and resource efficiency while dynamically handling updates. Each cell maintains a list of children, ensuring correct recalculations when values change. Operations such as insertions, deletions, and traversals are optimized for minimal overhead, prioritizing space efficiency.
+Stack is used for Recursion.
 
 \subsection*{Evaluation Algorithm: \texttt{Eval.c}}
 For commands such as output control and scrolling, no cell evaluation is required. However, for formula and function inputs, where a cell's value must be computed based on parsed data and its dependencies, the main evaluation algorithm manages the process. Additionally, any necessary recalculations due to dependency changes are handled within this framework.

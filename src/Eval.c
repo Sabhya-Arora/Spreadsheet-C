@@ -11,13 +11,16 @@ void remove_child(struct Cell* current, struct Cell ** spreadsheet);
 void free_topos (struct LinkedListNode * head);
 
 
+
 void delay(int number_of_seconds) {
     if (number_of_seconds < 0) number_of_seconds = 0;
-    struct timespec ts;
-    ts.tv_sec = number_of_seconds;  // Whole seconds
-    ts.tv_nsec = 0;                 // Nanoseconds (optional)
-    nanosleep(&ts, NULL);
+    
+    clock_t start_time = clock();
+    clock_t end_time = start_time + number_of_seconds * CLOCKS_PER_SEC;
+    
+    while (clock() < end_time);
 }
+
 
 
 

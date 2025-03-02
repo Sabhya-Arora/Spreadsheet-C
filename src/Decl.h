@@ -12,7 +12,6 @@
 #include <math.h>
 #include <stdbool.h>
 #include <time.h>
-#include <sys/time.h>
 struct Cell {
     int16_t row;
     int16_t col;

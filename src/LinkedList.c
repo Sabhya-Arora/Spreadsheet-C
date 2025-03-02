@@ -1,9 +1,6 @@
 #include "Decl.h"
-struct Node;
-struct Node {
-    struct Node * next;
-    struct Cell * key;
-};
+
+
 struct Node* createNode(struct Cell * key){
     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
     node->key = key;

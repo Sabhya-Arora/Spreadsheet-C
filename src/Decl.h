@@ -48,6 +48,12 @@ enum ops {
     SCROLL,
     ERR
 };
+
+struct Node {
+    struct Node * next;
+    struct Cell * key;
+};
+
 struct LinkedListNode {
     struct Cell * value;
     struct Cell * par_cell;

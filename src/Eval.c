@@ -1,6 +1,7 @@
 #include "LinkedList.h"
 #include "Decl.h"
 
+
 void calc (struct Cell * current, struct Cell ** spreadsheet);
 void recalc (struct Cell * current, struct Cell * par_cell, int old_value,bool was_faulty, struct Cell ** spreadsheet);
 void add_child(struct Cell* current, struct Cell ** spreadsheet);

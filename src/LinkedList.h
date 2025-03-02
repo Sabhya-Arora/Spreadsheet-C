@@ -4,11 +4,6 @@
 #include <stdlib.h>
 #include "Decl.h"
 
-struct Node {
-    struct Node *next;
-    struct Cell *key;
-};
-
 struct Node* createNode(struct Cell *key);
 struct Node* insert(struct Node* node, struct Cell *key);
 struct Node* deleteNode(struct Node* root, struct Cell *key);
